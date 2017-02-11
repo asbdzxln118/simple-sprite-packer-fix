@@ -160,10 +160,10 @@ namespace SimpleSpritePackerEditor
 					{
 						replacedCount += SPTools.ReplaceReferencesInProject(this.m_Instance.copyOfSprites, this.m_ReplaceMode, spriteRenderersOnly);
 						replacedCount += SPTools.ReplaceReferencesInScene(this.m_Instance.copyOfSprites, this.m_ReplaceMode, spriteRenderersOnly);
-#if !UNITY_5_3_OR_NEWER
-						EditorApplication.SaveScene();
-#else
+#if UNITY_5_3_OR_NEWER
 						EditorSceneManager.SaveOpenScenes();
+#else
+						EditorApplication.SaveScene();
 #endif
 						replacedCount += SPTools.ReplaceReferencesInAllScenes(this.m_Instance.copyOfSprites, this.m_ReplaceMode, spriteRenderersOnly, true);
 						break;

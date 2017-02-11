@@ -171,14 +171,21 @@ namespace SimpleSpritePackerEditor
 			
 			settings.spriteMode = 2;
 			settings.readable = false;
-			settings.maxTextureSize = 4096;
 			settings.wrapMode = TextureWrapMode.Clamp;
 			settings.npotScale = TextureImporterNPOTScale.ToNearest;
-			settings.textureFormat = TextureImporterFormat.ARGB32;
 			settings.filterMode = FilterMode.Point;
 			settings.aniso = 4;
 			settings.alphaIsTransparency = alphaTransparency;
-			
+#if UNITY_5_5_OR_NEWER
+			TextureImporterPlatformSettings platformSettings = textureImporter.GetDefaultPlatformTextureSettings();
+			platformSettings.maxTextureSize = 4096;
+			platformSettings.format = TextureImporterFormat.ARGB32;
+			textureImporter.SetPlatformTextureSettings(platformSettings);
+#else
+			settings.maxTextureSize = 4096;
+			settings.textureFormat = TextureImporterFormat.ARGB32;
+#endif
+
 			textureImporter.SetTextureSettings(settings);
 			textureImporter.textureType = TextureImporterType.Sprite;
 			
@@ -270,12 +277,17 @@ namespace SimpleSpritePackerEditor
 			
 			if (ti == null)
 				return false;
-			
+
+#if UNITY_5_5_OR_NEWER
+			TextureImporterPlatformSettings platformSettings = ti.GetDefaultPlatformTextureSettings();
+			platformSettings.format = format;
+			ti.SetPlatformTextureSettings(platformSettings);
+#else
 			TextureImporterSettings settings = new TextureImporterSettings();
 			ti.ReadTextureSettings(settings);
-			
 			settings.textureFormat = format;
 			ti.SetTextureSettings(settings);
+#endif
 			SPTools.DoAssetReimport(path, ImportAssetOptions.ForceUpdate | ImportAssetOptions.ForceSynchronousImport);
 
 			return true;
@@ -614,10 +626,10 @@ namespace SimpleSpritePackerEditor
 			
 			// Grab the current scene name
 			string startingScene;
-#if !UNITY_5_3_OR_NEWER
-			startingScene = EditorApplication.currentScene;
-#else
+#if UNITY_5_3_OR_NEWER
 			startingScene = EditorSceneManager.GetActiveScene().path;
+#else
+			startingScene = EditorApplication.currentScene;
 #endif
 			
 			// Get all scene names
@@ -634,10 +646,10 @@ namespace SimpleSpritePackerEditor
 				
 				// Try opening the scene
 				bool isOpen = false;
-#if !UNITY_5_3_OR_NEWER
-				isOpen = EditorApplication.OpenScene(sceneName);
-#else
+#if UNITY_5_3_OR_NEWER
 				isOpen = EditorSceneManager.OpenScene(sceneName).IsValid();
+#else
+				isOpen = EditorApplication.OpenScene(sceneName);
 #endif
 				if (isOpen)
 				{
@@ -651,19 +663,19 @@ namespace SimpleSpritePackerEditor
 						count += SPTools.ReplaceReferences(comps, (replaceAtlas ? spriteInfo.targetSprite : (spriteInfo.source as Sprite)), (replaceAtlas ? (spriteInfo.source as Sprite) : spriteInfo.targetSprite), spriteRenderersOnly);
 					}
 					
-#if !UNITY_5_3_OR_NEWER
-					EditorApplication.SaveScene();
-#else
+#if UNITY_5_3_OR_NEWER
 					EditorSceneManager.SaveOpenScenes();
+#else
+					EditorApplication.SaveScene();
 #endif
 				}
 			}
 			
 			// Load back the original scene
-#if !UNITY_5_3_OR_NEWER
-			EditorApplication.OpenScene(startingScene);
-#else
+#if UNITY_5_3_OR_NEWER
 			EditorSceneManager.OpenScene(startingScene);
+#else
+			EditorApplication.OpenScene(startingScene);
 #endif
 			
 			// Return the replaced references count
