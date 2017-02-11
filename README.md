@@ -12,10 +12,10 @@
 
 ## Changelog
 
-### Version 1.9f1
-
-修复 Unity 5.3 后，`EditorApplication` 被移除，使用 `EditorSceneManager` 代替后，所引发的 API 变更所产生的问题。
-
 ### Version 1.9f2
 
 修复 Unity 5.5 后， `TextureImportSettings` 中 `maxTextureSize` 和 `textureFormat` 参数被移除，使用 `TextureImporterPlatformSettings` 代替。
+
+### Version 1.9f1
+
+修复 Unity 5.3 后，`EditorApplication` 被移除，使用 `EditorSceneManager` 代替后，所引发的 API 变更所产生的问题。
