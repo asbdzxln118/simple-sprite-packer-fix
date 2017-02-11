@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 using System.Collections.Generic;
 using System.Reflection;
 using SimpleSpritePacker;
@@ -612,7 +613,12 @@ namespace SimpleSpritePackerEditor
 			bool replaceAtlas = (replaceMode == SPReferenceReplacerWindow.ReplaceMode.AtlasWithSource);
 			
 			// Grab the current scene name
-			string startingScene = EditorApplication.currentScene;
+			string startingScene;
+#if !UNITY_5_3_OR_NEWER
+			startingScene = EditorApplication.currentScene;
+#else
+			startingScene = EditorSceneManager.GetActiveScene().path;
+#endif
 			
 			// Get all scene names
 			string[] sceneNames = SPTools.GetAllScenesNames();
@@ -627,7 +633,13 @@ namespace SimpleSpritePackerEditor
 					continue;
 				
 				// Try opening the scene
-				if (EditorApplication.OpenScene(sceneName))
+				bool isOpen = false;
+#if !UNITY_5_3_OR_NEWER
+				isOpen = EditorApplication.OpenScene(sceneName);
+#else
+				isOpen = EditorSceneManager.OpenScene(sceneName).IsValid();
+#endif
+				if (isOpen)
 				{
 					Component[] comps = Object.FindObjectsOfType<Component>();
 					
@@ -639,12 +651,20 @@ namespace SimpleSpritePackerEditor
 						count += SPTools.ReplaceReferences(comps, (replaceAtlas ? spriteInfo.targetSprite : (spriteInfo.source as Sprite)), (replaceAtlas ? (spriteInfo.source as Sprite) : spriteInfo.targetSprite), spriteRenderersOnly);
 					}
 					
+#if !UNITY_5_3_OR_NEWER
 					EditorApplication.SaveScene();
+#else
+					EditorSceneManager.SaveOpenScenes();
+#endif
 				}
 			}
 			
 			// Load back the original scene
+#if !UNITY_5_3_OR_NEWER
 			EditorApplication.OpenScene(startingScene);
+#else
+			EditorSceneManager.OpenScene(startingScene);
+#endif
 			
 			// Return the replaced references count
 			return count;
