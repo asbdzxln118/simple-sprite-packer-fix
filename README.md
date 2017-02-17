@@ -12,7 +12,6 @@ How to Use?
 - [Support Website](http://www.evilsystem.eu/)
 - [Support E-mail](evilsystem@duloclan.com)
 
-
 当前 Unity Asset Store 中的版本为 `1.9(Aug 21, 2015)`，已经很久没有更新了，由于 Unity 内置的图片打包工具已完全免费，所以作者应该也不会进行更新了，随着 Unity 的版本不断更新，API 会出现不兼容的情况，一些特殊情况下，此工具还是有一定的作用，进行一些修复还可继续使用。
 
 
